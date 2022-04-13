@@ -42,3 +42,77 @@
 课程会涉及到 <u>基础架构，数据管理，Rendering，Animation，Physics，GamePlay，Effects，Navigation，Camera，ToolSet（C++ Reflection, Data Schema, Online, Motion Matching, Procedural Content Generation, Data-Oridnted Programming，JobSystem，Lumen，Nanite 等）</u>
 
 ## **2**.引擎架构分层
+### 概览
+从顶层到底层，分别为如下（5+1）
+
+![image-20220413200104937](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/image-20220413200104937.png)
+
+### Tool Layer
+编辑器的**工具层**，是我们在接触引擎的时候最直观的最直接交互的层级
+![image-20220413200256566](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/image-20220413200256566.png)
+
+### Function Layer
+**功能层**，是游戏可见，可移动，具有可玩性等
+- Rendering：三维数据转成二维图片
+
+- Animation：使角色动起来
+
+- Physics：具有真实世界的物理属性
+
+- Script，FSM，AI：使其具有游戏性
+
+- Camera，HUD，Input：人机界面的交互
+  ![image-20220413200750711](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/image-20220413200750711.png)
+
+### Recource Layer
+**资源层**，游戏运行依赖大量的文件，如模型文件、贴图文件、声音文件、配置文件等等，资源层负责对其加载和管理
+
+资源层给功能层提供“弹药”
+
+![image-20220413200942707](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/image-20220413200942707.png)
+
+### Core Layer
+**核心层** ，是为上层各系统，提供帮助的工具箱，会频繁使用如<u>容器创建，内存分配，多线程，数学库</u>等底层功能
+
+![image-20220413201409425](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/image-20220413201409425.png)
+
+### Platform Layer
+**平台层**，应对各种平台的不同，包括硬件和软件。引擎或游戏最终需要提供给客户，但是客户使用的平台和输入设备都有差异
+
+
+
+![image-20220413201722095](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/image-20220413201722095.png)
+
+### 3rd Party Libraries
+**第三方工具** ，有些是通过库的方式，有些是提供了一个额外的工具
+
+![image-20220413201905191](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/image-20220413201905191.png)
+
+### 为什么要分引擎层
+- 封装解耦，每一层只关注自己的事情，减低复杂度
+
+- 底层提供基础服务
+
+- 顶层不需要知道底层的具体实现
+
+- 顶层部分迭代频繁，底层相对稳定
+
+- 一般只允许顶层调用底层
+
+  ![image-20220413202125342](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/image-20220413202125342.png)
+
+### 资源层-How to Access My Data（怎么访问我的数据）
+#### 引擎化（importing）
+各种资源（Resource）的格式都是**不同**的，而且类似Maya的数据，里面有很多引擎不需要的数据，只是为了方便在Maya里面操作的信息，因为我们需要一次转换，将这些数据转换成引擎能够使用的高效数据，成为资产（Asset）
+
+如贴图，可以是Png或者Jpg等，他们有自己的压缩算法，如果直接在Gpu中使用会很费性能，可以将其统一转化为dds格式进行使用。
+
+#### 资产关联
+如对一个可以动起来的模型，其上面的网格，贴图，材质，动画等资源都是关联在一起的，我们可以定义另外一种资产进行管理指定（Composite Assert）
+
+
+
+
+
+
+
