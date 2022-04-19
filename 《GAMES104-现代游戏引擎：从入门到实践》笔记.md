@@ -110,9 +110,52 @@
 #### 资产关联
 如对一个可以动起来的模型，其上面的网格，贴图，材质，动画等资源都是关联在一起的，我们可以定义另外一种资产进行管理指定（Composite Assert）
 
+![image-20220419223823151](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202204192305396.png)
 
+这些引用到的资产可以通过GUID（唯一编号）等进行标识，可以避免资产位置改变而导致路径找不到的问题（路径无关性）
 
+#### Runtime Manager
+- 管理资产引用
 
+- 实时的通过引用去加载/卸载各种资产
 
+- 管理资产生命周期
 
+- 资源池分配
 
+  ![image-20220419224136091](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202204192305886.png)
+
+#### 功能层
+##### Tick
+使世界动起来，一个**周期**（Tick）里跑完一边逻辑和绘制渲染
+
+![image-20220419224327203](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202204192305191.png)
+
+整个Tick整体可以分开为两个部分：
+
+1. 逻辑
+
+2. 渲染
+
+   ![image-20220419224516009](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202204192305484.png)
+
+   
+
+#### 复杂
+功能层所涉及的东西很多，且其中的有些模块会在游戏引擎中又会在游戏中使用
+
+![image-20220419224725016](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202204192305874.png)
+
+#### 多线程
+一核有难,多核围观?
+初始,分为三个线程:Logic，Render，Simulation
+
+![image-20220419224940829](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202204192306757.png)
+
+主流引擎中，会把特别容易并行的东西，如物理等，fork出来，分散到别的线程去做
+
+![image-20220419225055110](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202204192306717.png)
+
+未来引擎中，把任务变成原子的，把每个核都能吃的满满的
+
+![image-20220419225139532](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202204192306990.png)
