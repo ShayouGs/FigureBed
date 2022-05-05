@@ -159,3 +159,63 @@
 未来引擎中，把任务变成原子的，把每个核都能吃的满满的
 
 ![image-20220419225139532](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202204192306990.png)
+
+
+
+#### 核心层
+
+![image-20220505210354960](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205052103007.png)
+
+#### 数学库
+除了一些特定的领域需要高深的数学，如物理。一般来说了解线性代数只是就能应付大多数问题。
+![image-20220505210431680](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205052104742.png)
+但是数学库需要很注重**效率**，可能一个很简单的运算为了减少时长要用到更多代码和理论。
+
+SIMD（Single Instruction Multiple Data），单指令多数据流，能够复制多个操作数，并把它们打包在大型寄存器的一组指令集，运算性能上有优势。
+
+#### 数据结构和内存管理
+一些编程语言的数据结构可能不满足我们的要求，比如C++的Vector当空间不够时，会开辟2倍的空间，删除时可能会产生碎片等，需要我们自己实现一套数据结构们这里也涉及到需要我们自己管理内存，减少碎片，实现内存分配等。
+
+![image-20220505210854268](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205052108326.png)
+
+高效的内存管理
+
+![image-20220505210919357](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205052109426.png)
+
+#### 平台层
+跨平台，掩盖平台的差异性
+
+
+
+![image-20220505211331996](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205052113033.png)
+
+如对于图形API来说，有OpenGL，DirectX，Vulkan等，需要一个RHI（Render Hardware Interface）封装各个平台的SDK的区别；
+
+
+
+![image-20220505211507853](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205052115910.png)
+
+#### 工具层
+##### 自己开发
+允许别人在引擎里去创造游戏的内容，以**Level Editor** 为中心，形成的一些列的编辑器
+
+![image-20220505211653173](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205052116406.png)
+为什么在别的工具里已经有了编辑器的情况下还要有一个游戏的编辑器；为了能实时在我们的游戏引擎中调整效果，保证我们在引擎编辑中看到的效果和实际游戏运行起来的效果一致，提升开发效率；
+
+工具层的代码量占的比例很多。
+#### 第三方开发
+第三方，如Maya，Houdini，Max，Blender等
+自己开发和第三方开发的工具，所产生的数据都会通过**Asset Conditioning Pipeline** 进行传输。
+
+![image-20220505212009749](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205052120012.png)
+
+
+
+## 4. 游戏引擎中的渲染实践
+
+
+
+
+
+
+
