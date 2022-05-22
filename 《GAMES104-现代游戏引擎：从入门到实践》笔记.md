@@ -209,6 +209,107 @@ SIMD（Single Instruction Multiple Data），单指令多数据流，能够复�
 
 ![image-20220505212009749](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205052120012.png)
 
+## 3.如何构建游戏世界
+### 游戏世界
+### GameObject
+游戏世界通常由动态物体，静态物体，环境，其他物体(Trigger，导航网格，规则等)等元素组成。
+
+<img src="https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222210662.png" alt="image-20220522221001466" style="zoom: 25%;" />
+
+<img src="https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222210320.png" alt="image-20220522221031134" style="zoom:25%;" />
+
+<img src="https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222210320.png" style="zoom:25%;" />
+
+<img src="https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222211151.png" alt="image-20220522221150981" style="zoom:25%;" />
+
+
+
+以上这些元素基本上都可以抽象为一个**GameObject** ;
+
+对于这些GameObject的描述基本可以分为两部分：属性（**Property** ）和行为(**Behavior** )，可以通过标准的面向对象的思想和继承之类的来实现；
+
+以无人机为例，其有位置，生命等属性，有移动，侦查等行为。攻击型无人机可以继承无人机类，增加Fire接口；
+
+### GmaeObject 
+
+![image-20220522221641286](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222216386.png)
+
+![image-20220522221650699](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222216785.png)
+
+
+
+### Component
+
+但是对于另外一些GameObject，通过继承方式不理想，比如一个水陆两栖坦克，既有船的能力，也有坦克的能力，那么它应该继承自谁呢？此时我们可以利用组合的方式，通过**Component** （组件），可以自定义的组合他们的能力；
+
+![image-20220522221841464](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222218582.png)
+
+仍以无人机为例，此时各种能力和属性都可以抽成一个个的组件，如TransformComp(位置)，ModelComp（外形），MotorComp（运动），AIComp，PhysicsComp等，此时无人机里只需要有一个ComponentBase的数组即可：
+
+![image-20220522222046248](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222220352.png)
+
+用组件的方式另外一个好处就是灵活，可替换，需要哪个能力就用哪个组件，不需要就卸掉
+
+![image-20220522222706368](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222227458.png)
+
+很多商业引擎也用的上述Component思想
+
+![image-20220522222745682](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222227774.png)
+
+注意Unreal和Unity中的Object与上述的GmeObject并不相同。Unreal中Actor是类似GameObject的概念，Uobject更类似于高级语言中的Object。
+
+### Tick
+
+每隔一段时间让世界向前走一步：让每个Gameobject中的每一个Component去Tick一次
+
+![image-20220522223001303](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222230395.png)
+
+在实际中，现代游戏引擎更多的通常不是逐对象逐组件去Tick，而是逐系统，比如先去做所有的和碰撞相关的事情，再去做所有和动画相关的事情，这样用类似流水线的方式，更有效率。
+
+![image-20220522223153949](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222231029.png)
+
+### 一个Tick的时间过长怎么处理？
+
+- Tick的时候将步长传入，依赖步长进行数据的补偿；
+
+- 直接跳过下一个Tick；
+
+- 通常还是需要进行策略优化
+
+### Event
+
+  对于GmeObject之间的交互，如一个炸弹爆炸，对其他不同的GO的影响，早期硬编码如下：
+
+![image-20220522223545099](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222235226.png)
+
+这样的代码明显违反设计模式的原则，由此引出Event（事件），有点类似观察者模式，通过事件派发的方式进行解耦，接收/绑定了这个事件的对象再去处理该事件。
+
+![image-20220522223726566](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222237689.png)
+
+在实际的时间传递中，时序很重要吗，如游戏的回放功能，实际是记录用户的输入，如果各用户是依次执行，则没有问题，但如果用户同时进行同一事件的操作则会有问题，因此需要引入一个“**邮局** "，各个操作先发到邮局，邮局去保证时序接着进行发送，常用引擎中的类似**PreTick,PostTick** 的函数都是为了处理时序问题
+
+
+
+主流游戏引擎示例如下：
+
+![image-20220522224119972](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222241097.png)
+
+### Scene Manage
+
+- 通过唯一ID进行标识管理；
+- 通过Object的位置进行管理；
+
+扔以爆炸为例，可以通过遍历场景中半径范围内所有的对象，进行消息的通知，也可以通过画格子的方式进行通知管理，先找临近的格子，没有就不再找别的格子了。
+
+![image-20220522224326607](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222243702.png)
+
+但由于实际场景中物体分布不均匀，比如有时战壕里的人明显会多余空地，此时可以通过分层的方式进行划分。
+
+![image-20220522224418871](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222244977.png)
+
+常用分层如下：
+
+![](https://raw.githubusercontent.com/ShayouGs/FigureBed/main/202205222244593.png)
 
 
 ## 4. 游戏引擎中的渲染实践
